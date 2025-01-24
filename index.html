@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lis's First Taco Bell Quest</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            color: #b794f4;
+            font-size: 2em;
+            text-align: center;
+            animation: glow 2s infinite alternate;
+            margin-bottom: 20px;
+        }
+
+        .intro-card {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 10px;
+            border: 1px solid #b794f4;
+            text-align: center;
+        }
+
+        .quest-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .quest-card {
+            background: #262626;
+            padding: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #333;
+        }
+
+        .quest-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px rgba(183, 148, 244, 0.3);
+        }
+
+        .quest-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .quest-emoji {
+            font-size: 2em;
+        }
+
+        .spicy-meter {
+            display: flex;
+            gap: 3px;
+            margin: 10px 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #b794f4;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: none;
+            border: none;
+            color: #b794f4;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+        }
+
+        .customization-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .customization-list li {
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .customization-list li:before {
+            content: "✓";
+            color: #68d391;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #b794f4, 0 0 10px #b794f4; }
+            to { text-shadow: 0 0 20px #b794f4, 0 0 30px #b794f4; }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1a1a1a;
+            border: 1px solid #b794f4;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #b794f4;
+            color: black;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        #memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .sauce-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #262626;
+            border-radius: 8px;
+            border: 1px solid #b794f4;
+        }
+
+        
+        .sauce-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .sauce-card {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid #333;
+        }
+
+        .sauce-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px rgba(183, 148, 244, 0.2);
+        }
+
+        .sauce-card p {
+            margin: 0;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+
+        .sauce-card h3 {
+            margin: 0 0 10px 0;
+            color: #b794f4;
+        }
+
+        .quest-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .sauce-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .action-btn {
+            background: #b794f4;
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .stats-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #ffffff00;
+            border-radius: 8px;
+        }
+
+        .game-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .roulette-wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 4px solid #b794f4;
+            margin: 20px auto;
+            position: relative;
+            transition: transform 3s cubic-bezier(0.2, 0.8, 0.3, 1);
+        }
+
+        .sauce-score {
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+
+        .time-trial-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #262626;
+            border-radius: 8px;
+        }
+
+        .choices-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .choice-button {
+            background: #1a1a1a;
+            border: 1px solid #b794f4;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .choice-button:hover {
+            background: #b794f4;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="header">Lis's First Taco Bell Adventure! 🌮</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('home')">Home</button>
+            <button class="tab" onclick="showTab('games')">Deja Vu</button>
+            <button class="tab" onclick="showTab('sauce-roulette')">Sauce Roulette</button>
+            <button class="tab" onclick="showTab('time-trial')">Time Trial</button>
+        </div>
+
+        <div id="home" class="tab-content active">
+            <div class="intro-card">
+                <h2>Your Perfect First Order</h2>
+                <p>Ready to discover the best first-time Taco Bell experience? Click each item to learn more!</p>
+            </div>
+
+            <div class="quest-container">
+                <!-- Quest cards remain the same -->
+                <div class="quest-card" onclick="showDetails('chalupa')">
+                    <div class="quest-header">
+                        <span class="quest-emoji">🌯</span>
+                        <h3>Chalupa Supreme</h3>
+                    </div>
+                    <p>A puffy, crispy flatbread shell filled with goodness</p>
+                    <div class="spicy-meter">
+                        🌶️🌶️⚫⚫⚫
+                    </div>
+                </div>
+
+                <div class="quest-card" onclick="showDetails('doritos')">
+                    <div class="quest-header">
+                        <span class="quest-emoji">🌮</span>
+                        <h3>Doritos Locos Tacos</h3>
+                    </div>
+                    <p>The legendary taco with a Doritos shell</p>
+                    <div class="spicy-meter">
+                        🌶️🌶️🌶️⚫⚫
+                    </div>
+                </div>
+
+                <div class="quest-card" onclick="showDetails('nacho-fries')">
+                    <div class="quest-header">
+                        <span class="quest-emoji">🍟</span>
+                        <h3>Nacho Fries</h3>
+                    </div>
+                    <p>Seasoned fries with bold Mexican spices</p>
+                    <div class="spicy-meter">
+                        🌶️🌶️⚫⚫⚫
+                    </div>
+                </div>
+
+                <div class="quest-card" onclick="showDetails('potato-taco')">
+                    <div class="quest-header">
+                        <span class="quest-emoji">🥔</span>
+                        <h3>Spicy Potato Soft Taco</h3>
+                    </div>
+                    <p>A veggie favorite with crispy potatoes</p>
+                    <div class="spicy-meter">
+                        🌶️🌶️🌶️⚫⚫
+                    </div>
+                </div>
+
+                <div class="quest-card" onclick="showDetails('baja')">
+                    <div class="quest-header">
+                        <span class="quest-emoji">🥤</span>
+                        <h3>Large Baja Blast</h3>
+                    </div>
+                    <p>Mountain Dew's tropical lime flavor - exclusive to Taco Bell!</p>
+                </div>
+
+                <div class="quest-card" onclick="showDetails('cinnabon')">
+                    <div class="quest-header">
+                        <span class="quest-emoji">🧁</span>
+                        <h3>Cinnabon Delights</h3>
+                    </div>
+                    <p>Warm donut holes filled with cinnamon roll frosting</p>
+                </div>
+            </div>
+
+            
+        
+
+            <div class="sauce-section">
+                <h2>Essential Sauces</h2>
+                <div class="sauce-grid">
+                    <div class="sauce-card">
+                        <h3>🔥 Fire Sauce</h3>
+                        <p>Hot and smoky - grab LOTS of packets!</p>
+                    </div>
+                    <div class="sauce-card">
+                        <h3>🥬 Spicy Ranch</h3>
+                        <p>Creamy with a spicy kick</p>
+                    </div>
+                    <div class="sauce-card">
+                        <h3>🌶️ Jalapeño Sauce</h3>
+                        <p>Fresh, zesty heat</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="games" class="tab-content">
+            <div class="intro-card">
+                <h2>Taco Bell Memory Game</h2>
+                <p>Match the pairs to test your menu knowledge!</p>
+            </div>
+            <div id="memory-game"></div>
+            <div class="stats-container">
+                <p>Matches: <span id="matches">0</span></p>
+                <button onclick="resetGame()" class="action-btn">Reset Game</button>
+            </div>
+        </div>
+
+        <div id="sauce-roulette" class="tab-content">
+            <div class="intro-card">
+                <h2>Sauce Roulette Challenge</h2>
+                <p>Spin the wheel to discover exciting sauce combinations!</p>
+            </div>
+            <div class="game-container">
+                <div class="roulette-wheel" id="rouletteWheel"></div>
+                <div class="sauce-score">Score: <span id="rouletteScore">0</span></div>
+                <button class="action-btn" onclick="spinRoulette()">Spin!</button>
+                <div id="sauceResult" class="mt-4"></div>
+            </div>
+        </div>
+    
+        <div id="time-trial" class="tab-content">
+            <div class="intro-card">
+                <h2>Taco Time Trial</h2>
+                <p>Test your Taco Bell menu knowledge!</p>
+            </div>
+            <div class="time-trial-container">
+                <div>Time: <span id="timeLeft">30</span>s | Score: <span id="timeTrialScore">0</span></div>
+                <div id="question" class="mt-4"></div>
+                <div id="choices" class="choices-grid"></div>
+                <button class="action-btn" onclick="startTimeTrial()">Start Game</button>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <button class="close-button" onclick="hideModal()">×</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    <div class="overlay" id="overlay" onclick="hideModal()"></div>
+
+    <script>
+        // Memory Game
+        const cards = [
+            '🌮', '🌮', '🌯', '🌯', '🥤', '🥤', 
+            '🔥', '🔥', '🍟', '🍟', '🥔', '🥔'
+        ];
+        
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let firstCard, secondCard;
+        let matches = 0;
+
+        function createMemoryGame() {
+            const gameBoard = document.getElementById('memory-game');
+            const shuffledCards = cards.sort(() => Math.random() - 0.5);
+            
+            gameBoard.innerHTML = '';
+            shuffledCards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'memory-card';
+                cardElement.setAttribute('data-card', card);
+                cardElement.setAttribute('data-index', index);
+                cardElement.textContent = '❓';
+                cardElement.addEventListener('click', flipCard);
+                gameBoard.appendChild(cardElement);
+            });
+        }
+
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+
+            this.textContent = this.getAttribute('data-card');
+            this.style.background = '#b794f4';
+
+            if (!hasFlippedCard) {
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            const isMatch = firstCard.getAttribute('data-card') === secondCard.getAttribute('data-card');
+            isMatch ? disableCards() : unflipCards();
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            matches++;
+            document.getElementById('matches').textContent = matches;
+            resetBoard();
+        }
+
+        function unflipCards() {
+            lockBoard = true;
+            setTimeout(() => {
+                firstCard.textContent = '❓';
+                secondCard.textContent = '❓';
+                firstCard.style.background = '#333';
+                secondCard.style.background = '#333';
+                resetBoard();
+            }, 1000);
+        }
+
+        function resetBoard() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+        }
+
+        function resetGame() {
+            matches = 0;
+            document.getElementById('matches').textContent = matches;
+            createMemoryGame();
+        }
+
+        // Initialize memory game
+        createMemoryGame();
+
+        const itemDetails = {
+            'chalupa': {
+                title: 'Chalupa Supreme',
+                description: 'A thick, puffy flatbread that\'s crispy outside and soft inside.',
+                customizations: [
+                    'Add refried beans',
+                    'Add potatoes',
+                    'Add chipotle sauce'
+                ],
+                tip: 'The shell should be noticeably puffy and crispy - that\'s how you know it\'s fresh!'
+            },
+            'doritos': {
+                title: 'Doritos Locos Tacos',
+                description: 'A crunchy taco shell made from actual Doritos chips!',
+                customizations: [
+                    'Add refried beans',
+                    'Add chipotle sauce'
+                ],
+                tip: 'Try it with different Doritos shell flavors if available!'
+            },
+            'nacho-fries': {
+                title: 'Nacho Fries',
+                description: 'Crispy fries seasoned with Mexican spices, served with nacho cheese sauce.',
+                customizations: [
+                    'Dip in nacho cheese sauce',
+                    'Try with your favorite sauces'
+                ],
+                tip: 'Best eaten while hot and crispy!'
+            },
+            'potato-taco': {
+                title: 'Spicy Potato Soft Taco',
+                description: 'Soft tortilla filled with crispy potato bites, lettuce, cheese, and chipotle sauce.',
+                customizations: [
+                    'Comes perfect as-is',
+                    'Add extra sauce if desired'
+                ],
+                tip: 'A great vegetarian option that\'s full of flavor!'
+            },
+            'baja': {
+                title: 'Large Baja Blast',
+                description: 'Mountain Dew Baja Blast - a tropical lime flavor created exclusively for Taco Bell!',
+                customizations: [
+                    'Get it large sized',
+                    'Ask for light ice for more drink',
+                    'Available frozen too!'
+                ],
+                tip: 'The perfect refreshing companion to spicy menu items!'
+            },
+            'cinnabon': {
+                title: 'Cinnabon Delights',
+                description: 'Warm donut holes filled with Cinnabon® cream cheese frosting, rolled in cinnamon sugar!',
+                customizations: [
+                'Order 2-pack or 12-pack',
+                'Best served warm',
+                'Extra cinnamon sugar available'
+                ],
+                tip: 'Perfect breakfast treat or late-night dessert from Taco Bell!'
+            }
+        };
+
+        function showDetails(itemId) {
+            const item = itemDetails[itemId];
+            const content = `
+                <h2>${item.title}</h2>
+                <p>${item.description}</p>
+                <h3>Recommended Customizations:</h3>
+                <ul class="customization-list">
+                    ${item.customizations.map(c => `<li>${c}</li>`).join('')}
+                </ul>
+                <p><strong>Pro Tip:</strong> ${item.tip}</p>
+            `;
+            document.getElementById('modalContent').innerHTML = content;
+            document.getElementById('itemModal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function hideModal() {
+            document.getElementById('itemModal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+        }
+
+                // Add Sauce Roulette Game
+                const sauces = [
+            { name: 'Fire', spiceLevel: 4, color: '#dc2626' },
+            { name: 'Hot', spiceLevel: 3, color: '#ea580c' },
+            { name: 'Mild', spiceLevel: 1, color: '#eab308' },
+            { name: 'Diablo', spiceLevel: 5, color: '#991b1b' },
+            { name: 'Verde', spiceLevel: 2, color: '#16a34a' },
+            { name: 'Chipotle', spiceLevel: 3, color: '#c2410c' }
+        ];
+
+        let rouletteScore = 0;
+        let isSpinning = false;
+
+        function createRouletteWheel() {
+            const wheel = document.getElementById('rouletteWheel');
+            wheel.innerHTML = '';
+            
+            sauces.forEach((sauce, index) => {
+                const slice = document.createElement('div');
+                const angle = (360 / sauces.length) * index;
+                slice.style.position = 'absolute';
+                slice.style.width = '100%';
+                slice.style.height = '100%';
+                slice.style.background = sauce.color;
+                slice.style.clipPath = `polygon(50% 50%, ${50 + 50 * Math.cos(2 * Math.PI * index / sauces.length)}% ${50 + 50 * Math.sin(2 * Math.PI * index / sauces.length)}%, ${50 + 50 * Math.cos(2 * Math.PI * (index + 1) / sauces.length)}% ${50 + 50 * Math.sin(2 * Math.PI * (index + 1) / sauces.length)}%)`;
+                wheel.appendChild(slice);
+            });
+        }
+
+        function spinRoulette() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            const wheel = document.getElementById('rouletteWheel');
+            const rotation = 1440 + Math.random() * 360;
+            wheel.style.transform = `rotate(${rotation}deg)`;
+
+            setTimeout(() => {
+                const sauce1 = sauces[Math.floor(Math.random() * sauces.length)];
+                const sauce2 = sauces[Math.floor(Math.random() * sauces.length)];
+                const comboScore = (sauce1.spiceLevel + sauce2.spiceLevel) * 10;
+                rouletteScore += comboScore;
+                
+                document.getElementById('rouletteScore').textContent = rouletteScore;
+                document.getElementById('sauceResult').innerHTML = `
+                    <h3>Your Sauce Combo:</h3>
+                    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
+                        <span style="background: ${sauce1.color}; padding: 5px 10px; border-radius: 4px;">${sauce1.name}</span>
+                        <span style="background: ${sauce2.color}; padding: 5px 10px; border-radius: 4px;">${sauce2.name}</span>
+                    </div>
+                    <div>Combo Score: ${comboScore}</div>
+                `;
+                
+                isSpinning = false;
+            }, 3000);
+        }
+
+        // Add Time Trial Game
+        const menuItems = {
+            'Chalupa': ['Flatbread Shell', 'Seasoned Beef', 'Lettuce', 'Tomatoes', 'Cheese'],
+            'Crunchwrap Supreme': ['Tostada Shell', 'Seasoned Beef', 'Nacho Cheese', 'Sour Cream', 'Tomatoes'],
+            'Mexican Pizza': ['Crispy Shells', 'Refried Beans', 'Seasoned Beef', 'Pizza Sauce', 'Cheese'],
+            'Gordita Crunch': ['Flatbread', 'Hard Taco Shell', 'Seasoned Beef', 'Lettuce', 'Cheese']
+        };
+
+        let timeTrialScore = 0;
+        let timeLeft = 30;
+        let timerInterval;
+        let currentQuestion;
+
+        function generateQuestion() {
+            const items = Object.keys(menuItems);
+            const randomItem = items[Math.floor(Math.random() * items.length)];
+            const correctIngredient = menuItems[randomItem][Math.floor(Math.random() * menuItems[randomItem].length)];
+            
+            const allIngredients = [...new Set(Object.values(menuItems).flat())];
+            const wrongIngredients = allIngredients.filter(ing => !menuItems[randomItem].includes(ing));
+            
+            const choices = [correctIngredient];
+            while (choices.length < 4) {
+                const randomWrong = wrongIngredients[Math.floor(Math.random() * wrongIngredients.length)];
+                if (!choices.includes(randomWrong)) {
+                    choices.push(randomWrong);
+                }
+            }
+
+            return {
+                item: randomItem,
+                choices: choices.sort(() => Math.random() - 0.5),
+                correct: correctIngredient
+            };
+        }
+
+        function startTimeTrial() {
+            timeTrialScore = 0;
+            timeLeft = 30;
+            document.getElementById('timeTrialScore').textContent = timeTrialScore;
+            document.getElementById('timeLeft').textContent = timeLeft;
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timeLeft').textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endTimeTrial();
+                }
+            }, 1000);
+
+            showQuestion();
+        }
+
+        function showQuestion() {
+            currentQuestion = generateQuestion();
+            document.getElementById('question').textContent = `Which ingredient is in the ${currentQuestion.item}?`;
+            
+            const choicesContainer = document.getElementById('choices');
+            choicesContainer.innerHTML = '';
+            currentQuestion.choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.className = 'choice-button';
+                button.textContent = choice;
+                button.onclick = () => checkAnswer(choice);
+                choicesContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(choice) {
+            if (choice === currentQuestion.correct) {
+                timeTrialScore += 100;
+                document.getElementById('timeTrialScore').textContent = timeTrialScore;
+            }
+            showQuestion();
+        }
+
+        function endTimeTrial() {
+            document.getElementById('question').textContent = `Game Over! Final Score: ${timeTrialScore}`;
+            document.getElementById('choices').innerHTML = '';
+        }
+
+        // Initialize games
+        createRouletteWheel();
+    </script>
+</body>
+</html>
